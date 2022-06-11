@@ -19,19 +19,23 @@ const Login = () => {
 
     const loginHandler = async (e) => {
         e.preventDefault();
+
         const payload = { email, password };
         dispatch({ type: authConstants.LOGIN_REQUEST });
         const result = await signIn("credentials", { ...payload, redirect: false });
-        console.log("result", result);
         if (!result.error) {
             const session = await getSession();
-            console.log("session", session)
-            dispatch({ type: authConstants.LOGIN_SUCCESS, payload: session });
+            dispatch({
+                type: authConstants.LOGIN_SUCCESS,
+                payload: session
+            });
             router.replace(`/`);
         } else {
-            dispatch({ type: authConstants.LOGIN_FAILURE, payload: result.error });
-            toast.error(result.error);
-            setError(result.error);
+            dispatch({
+                type: authConstants.LOGIN_FAILURE,
+                payload: result.error
+            });
+            setErrorMessage(result.error);
         }
     }
 

@@ -1,31 +1,34 @@
 import { useState } from 'react';
 import { createPost } from '../../../client/request';
 import styles from './style.module.css'
-
+import axios from 'axios'
 const PostCreatePage = () => {
-
-    const [image, setImage] = useState(null)
-    const [imageInput, setImageInput] = useState(null)
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [imageURL, setImageURL] = useState(null);
 
-    const handleImage = (e) => {
-        const file = e.target.files[0];
-        setImageInput(file);
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-            setImage(e.target.result)
-        }
-        fileReader.readAsDataURL(file);
+    const handleImage = (event) => {
+        const imageData = new FormData()
+        imageData.set('key', 'bcaa76da5c37cf7520b24da6b76c88ea');
+        imageData.append('image', event.target.files[0]);
+        axios.post('https://api.imgbb.com/1/upload', imageData)
+            .then(res => {
+                console.log(res);
+                console.log(res?.data?.data?.display_url)
+                setImageURL(res?.data?.data?.display_url)
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
     const handleFormData = async (e) => {
         e.preventDefault();
-        const form = new FormData();
-        form.append('title', title);
-        form.append('description', description);
-        form.append('image', imageInput);
-        console.log("form", form);
-        const result = await createPost(form);
+        const input = {
+            title,
+            desc: description,
+            image: imageURL
+        }
+        const result = await createPost(input);
         console.log("result===", result)
     }
     return (
@@ -73,7 +76,7 @@ const PostCreatePage = () => {
                         />
                     </div>
                     <div className="col">
-                        {image && <img src={image} style={{ width: '100px' }} alt="" />}
+                        {/* {image && <img src={image} style={{ width: '100px' }} alt="" />} */}
                     </div>
                 </div>
                 <div className='row'>

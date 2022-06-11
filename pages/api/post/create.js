@@ -1,4 +1,5 @@
-import multer from 'multer';
+import { getToken } from "next-auth/jwt";
+import { getSession } from "next-auth/react"
 import nc from 'next-connect';
 import slugify from 'slugify';
 import { staticResourceUrl } from '../../../client/config';
@@ -6,26 +7,11 @@ import { dbConnect } from '../../../lib/db-connect'
 import Post from '../../../models/post';
 import { errorHandler, responseHandler, validateAllOnces } from '../../../utils/common';
 
-export const config = {
-    api: {
-        bodyParser: false
-    }
-}
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: './public/uploads',
-        // destination: function (req, file, cb) {
-        //     cb(null, 'public/uploads');
-        // },
-        // destination: function (req, file, cb) {
-        //     cb(null, path.join(process.cwd(), "public", "uploads"));
-        // },
-        filename: function (req, file, cb) {
-            cb(null, new Date().getTime() + "-" + file.originalname);
-        },
-    }),
-});
+// export const config = {
+//     api: {
+//         bodyParser: false
+//     }
+// }
 
 const handler = nc({
     onError: (err, req, res, next) => {
@@ -35,37 +21,42 @@ const handler = nc({
         res.status(404).send('No match found')
     },
 })
-    .use(upload.single('image'))
-    .post((req, res) => {
-        res.status(201).json({ body: req.body, file: req.file })
-        // try {
-        //     const session = await getSession({ req });
-        //     if (!session) {
-        //         errorHandler('Access denied', res)
-        //     } else {
-        //         const { title, desc } = req.body;
-        //         validateAllOnces({ title, desc });
-        //         await dbConnect();
-        //         const userId = session.user.id;
-        //         const url = staticResourceUrl + req.file.filename
-        //         const slug = slugify(req.body.title, { remove: /[*+~.()'"!:@]/g });
-        //         const post = new Post({
-        //             ...req.body,
-        //             slug,
-        //             image: url,
-        //             user: userId,
-        //         });
-        //         const savePost = await post.save();
-        //         if (savePost) {
-        //             responseHandler(savePost, res);
-        //         } else {
-        //             errorHandler(savePost, res);
-        //         }
-        //         // res.status(201).json({ body: req.body })
-        //     }
-        // } catch (error) {
-        //     errorHandler(error, res)
-        // }
+    .post(async (req, res) => {
+
+        try {
+            const session = await getSession({ req });
+            const token = await getToken({ req });
+            console.log("session: ", session);
+            console.log("token: ", token);
+            if (!session) {
+                console.log("session not found");
+                errorHandler('Access denied', res)
+            } else {
+                console.log("session found", session);
+                const { title, desc, image } = req.body;
+                validateAllOnces({ title, desc });
+                await dbConnect();
+                const userId = session.user.id;
+                console.log("userId:", userId);
+                const slug = slugify(req.body.title, { remove: /[*+~.()'"!:@]/g });
+                const post = new Post({
+                    ...req.body,
+                    slug,
+                    image: image,
+                    user: userId,
+                });
+                const savePost = await post.save();
+                if (savePost) {
+                    responseHandler(savePost, res);
+                } else {
+                    errorHandler(savePost, res);
+                }
+                // res.status(201).json({ body: req.body })
+            }
+        } catch (error) {
+            console.log("catch error:", error);
+            errorHandler(error, res)
+        }
 
     })
 

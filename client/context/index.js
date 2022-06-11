@@ -4,7 +4,7 @@ import { authConstants } from './constants';
 const Store = createContext();
 
 const reducer = (state, action) => {
-    console.log("context", state, action)
+    // console.log("context", state, action)
     switch (action.type) {
         case authConstants.LOGIN_REQUEST: {
             return {
