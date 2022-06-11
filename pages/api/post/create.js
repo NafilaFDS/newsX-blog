@@ -41,7 +41,7 @@ const handler = nc({
                 const slug = slugify(req.body.title, { remove: /[*+~.()'"!:@]/g });
                 const post = new Post({
                     ...req.body,
-                    slug,
+                    slug: slug.toLocaleLowerCase(),
                     image: image,
                     user: userId,
                 });

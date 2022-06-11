@@ -39,7 +39,6 @@ const PostCreatePage = () => {
             image: imageURL
         }
         const result = await createPost(input);
-        console.log("result===", result)
         if (result.hasError) {
             setErrorMessage(result.errorMessage)
             toast.error(result.errorMessage)
@@ -47,6 +46,7 @@ const PostCreatePage = () => {
             setTitle('');
             setDescription('');
             setImageURL('');
+            router.push('/')
         }
     }
 

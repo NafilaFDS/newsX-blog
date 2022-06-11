@@ -1,4 +1,5 @@
 export { getStaticProps } from '../ssr/home';
+import Link from 'next/link';
 import styles from '../styles/Home.module.css'
 
 export default function Home({ posts }) {
@@ -13,6 +14,9 @@ export default function Home({ posts }) {
                 <h2 class="blog-post-title mb-1">{post.title}</h2>
                 <p class="blog-post-meta">{post.createdAt} by <a href="#">Mark</a></p>
                 <p>{post.desc}</p>
+                <Link href={`/post/${post._id}/${post.slug}`}>
+                  <a>View More</a>
+                </Link>
               </article>
             </div>
           </div>
