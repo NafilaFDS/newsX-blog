@@ -1,10 +1,24 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useStore } from '../../client/context';
+import Loader from '../../components/Loader';
 import { getValue } from '../../utils/common';
 
 export { getServerSideProps } from '../../ssr/profile';
 
 const UserPorfilePage = ({ posts, session }) => {
+    const router = useRouter();
+    const [state,] = useStore();
+    const loggedInUser = getValue(state, ['user'], null)
     const user = getValue(session, ['user'], null);
+
+    if (loggedInUser && loggedInUser.authenticating) {
+        return <Loader />
+    }
+    if (!loggedInUser.authenticated) {
+        router.replace(`/login`);
+        return null;
+    }
     return (
         <div className='container'>
             <div className="row">
