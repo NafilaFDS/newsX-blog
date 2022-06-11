@@ -12,7 +12,7 @@ export default function Home({ posts }) {
             <div className="col">
               <article class="blog-post">
                 <h2 class="blog-post-title mb-1">{post.title}</h2>
-                <p class="blog-post-meta">{post.createdAt} by <a href="#">Mark</a></p>
+                <p class="blog-post-meta">{post.createdAt} by <a href="#">{post.user?.name}</a></p>
                 <p>{post.desc}</p>
                 <Link href={`/post/${post._id}/${post.slug}`}>
                   <a>View More</a>

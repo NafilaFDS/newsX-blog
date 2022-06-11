@@ -5,7 +5,9 @@ import { errorHandler, responseHandler } from "../../../utils/common";
 export default async function handler(req, res) {
     try {
         await dbConnect();
-        const posts = await Post.find({}).select('_id title desc image slug createdAt').exec();
+        const posts = await Post.find({}).select('_id title desc image user slug createdAt')
+            .populate('user', 'name')
+            .exec();
         if (posts) {
             responseHandler(posts, res);
         }
