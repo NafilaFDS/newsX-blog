@@ -39,7 +39,7 @@ const Header = () => {
                         </div>
                         <div className="col-4 text-center">
                             <Link href={`/`}>
-                                <a className="blog-header-logo text-dark" href="#">NEWSX</a>
+                                <a className="blog-header-logo text-dark">NEWSX</a>
                             </Link>
                         </div>
                         <div className="col-4 d-flex justify-content-end align-items-center">
@@ -48,14 +48,19 @@ const Header = () => {
                             </a>
                             {
                                 authenticated ? (
-                                    <a onClick={() => signOut({
-                                        redirect: false,
-                                    }).then(result => {
-                                        dispatch({ type: authConstants.LOGIN_FAILURE })
-                                    })}
-                                        className="btn btn-sm btn-outline-secondary"
-                                        href="#">Logout
-                                    </a>
+                                    <>
+                                        <Link href='/post/create'>
+                                            <a className='btn btn-sm btn-outline-secondary user-login-btn'>Create</a>
+                                        </Link>
+                                        <a onClick={() => signOut({
+                                            redirect: false,
+                                        }).then(result => {
+                                            dispatch({ type: authConstants.LOGIN_FAILURE })
+                                        })}
+                                            className="btn btn-sm btn-outline-secondary user-login-btn"
+                                            href="#">Logout
+                                        </a>
+                                    </>
                                 ) : (
                                     <>
                                         <Link href={`/signup`}>

@@ -12,7 +12,7 @@ const Login = () => {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [state, dispatch] = useStore();
     const user = getValue(state, ['user'], null);
 
@@ -36,6 +36,7 @@ const Login = () => {
                 payload: result.error
             });
             setErrorMessage(result.error);
+            toast.error(result.error);
         }
     }
 

@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import { createPost } from '../../../client/request';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from './style.module.css'
 import axios from 'axios'
+import { useStore } from '../../../client/context';
+import { getValue } from '../../../utils/common';
+import { useRouter } from 'next/router';
+import Loader from '../../../components/Loader';
 const PostCreatePage = () => {
+    const router = useRouter();
+    const [state,] = useStore();
+    const user = getValue(state, ['user'], null)
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageURL, setImageURL] = useState(null);
-
+    const [errorMessage, setErrorMessage] = useState(null);
     const handleImage = (event) => {
         const imageData = new FormData()
         imageData.set('key', 'bcaa76da5c37cf7520b24da6b76c88ea');
@@ -30,7 +40,25 @@ const PostCreatePage = () => {
         }
         const result = await createPost(input);
         console.log("result===", result)
+        if (result.hasError) {
+            setErrorMessage(result.errorMessage)
+            toast.error(result.errorMessage)
+        } else {
+            setTitle('');
+            setDescription('');
+            setImageURL('');
+        }
     }
+
+
+    if (user && user.authenticating) {
+        return <Loader />
+    }
+    if (!user.authenticated) {
+        router.replace(`/login`);
+        return null;
+    }
+
     return (
         <div className={`container ${styles['post-create']}`}>
             <div className="row">
@@ -85,6 +113,7 @@ const PostCreatePage = () => {
                     </div>
                 </div>
             </form>
+            <ToastContainer />
         </div>
     )
 }
