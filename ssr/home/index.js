@@ -13,7 +13,7 @@ export const getStaticProps = async (ctx) => {
     } else {
         return {
             props: {
-                posts: [],
+                posts: null,
                 response
             }
         }
