@@ -5,9 +5,10 @@ import { errorHandler, responseHandler } from "../../../utils/common";
 export default async function handler(req, res) {
     try {
         await dbConnect();
-        const posts = await Post.find({}).select('_id title desc image user slug createdAt')
+        const posts = await Post.find({}).select('_id title desc image slug createdAt')
             .populate('user', 'name')
             .exec();
+        console.log("posts:: ", posts);
         if (posts) {
             responseHandler(posts, res);
         }
@@ -15,6 +16,7 @@ export default async function handler(req, res) {
             errorHandler('Something went wrong', res);
         }
     } catch (error) {
+        console.log("error:: ", error);
         errorHandler(error, res)
     }
 }

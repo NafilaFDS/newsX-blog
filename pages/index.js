@@ -22,6 +22,14 @@ export default function Home({ posts }) {
           </div>
         ))
       }
+      {
+        posts.length === 0 &&
+        <div className="row">
+          <div className="col">
+            <h1 className="text-center">No Post Available</h1>
+          </div>
+        </div>
+      }
 
     </div>
   )
